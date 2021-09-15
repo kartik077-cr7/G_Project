@@ -10,7 +10,7 @@ import Gun from '../Images/gun.jpg';
 import Hairoil from '../Images/Hairoil.jpg';
 import Missile from '../Images/missile.gif';
 import Purse from '../Images/Purse.jpg';
-import Shoe2 from '../Images/Shoe2.jpg';
+import Shoe2 from '../Images/Nike_Shoes.jpg';
 import Shoes from '../Images/Shoes.jpg';
 
 const imagesUrl = [

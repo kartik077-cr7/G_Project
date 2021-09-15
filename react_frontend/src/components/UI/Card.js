@@ -32,7 +32,7 @@ export default function MediaCard({url}) {
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
-            Lizard
+            {url.slice(14,url.indexOf('.')).toUpperCase()}
           </Typography>
         </CardContent>
       </CardActionArea>
