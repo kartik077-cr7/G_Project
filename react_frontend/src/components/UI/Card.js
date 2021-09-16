@@ -7,7 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import Car from '../../Images/Car.jpg'
+
 
 const useStyles = makeStyles({
   root: {
@@ -18,21 +18,24 @@ const useStyles = makeStyles({
   },
 });
 
-export default function MediaCard({url}) {
+const imageUrl = 'images/';
+export default function MediaCard({name,url}) {
+  
   const classes = useStyles();
-  console.log(url);
+  const newUrl = `${imageUrl}${url}`;
   return (
     <Card className={classes.root}>
       <CardActionArea>
         <CardMedia
           className={classes.media}
-          image={url}
+          //image={url}
+          image = {newUrl}
           style={{height:'200px'}}
           title="Flipkart Item"
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
-            {url.slice(14,url.indexOf('.')).toUpperCase()}
+            {name}
           </Typography>
         </CardContent>
       </CardActionArea>

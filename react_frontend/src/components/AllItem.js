@@ -1,21 +1,13 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Card from './UI/Card';
 import Container from '@material-ui/core/Container';
-import Car from '../Images/Car.jpg';
-import Gun from '../Images/gun.jpg';
-import Hairoil from '../Images/Hairoil.jpg';
-import Missile from '../Images/missile.gif';
-import Purse from '../Images/Purse.jpg';
-import Shoe2 from '../Images/Nike_Shoes.jpg';
-import Shoes from '../Images/Shoes.jpg';
+import LoadingSpinner from './UI/LoadingSpinner';
+const firebaseBackend = 'https://flipgrid-71382-default-rtdb.asia-southeast1.firebasedatabase.app/';
 
-const imagesUrl = [
-         Car,Gun,Hairoil,Missile,Purse,Shoe2,Shoes
-]
 
 const useStyles = makeStyles({
     container:{
@@ -29,15 +21,36 @@ const useStyles = makeStyles({
     },
   });
 
-  export default function AllItems() {
+  export default function AllItems({objectType}) {
+      
+  
+      const [cardItems,setCardItems] = useState([]);
+      const [isLoading,setIsLoading] = useState(true);
+      
+      useEffect(()=>{
+        
+        const fetchItems = async (objectType) =>{
+           setIsLoading(true);
+           const response = await fetch(`${firebaseBackend}/${objectType}.json`)
+           const items = await response.json();
+           const savedItems = Object.keys(items).map((key)=>[key,items[key]]);
+           setCardItems(savedItems);
+           setIsLoading(false);
+        };
+        fetchItems(objectType);
+      },[objectType])
+      
       const classes = useStyles();
-      console.log(Car);
+      
+      if(isLoading)
+        return <LoadingSpinner/>;
+      
       return (
         <Container className={classes.container}>
            <Grid container spacing={3}>
-                {imagesUrl.map( url => (
-                    <Grid item xs={6} md={6} lg={4} key={url}>
-                        <Card id ={url} url={url} />
+               {cardItems.map( item => (
+                    <Grid item xs={6} md={6} lg={4} key={item[0]}>
+                        <Card id ={item[0]} name = {item[0]} url={item[1]} />
                     </Grid>
                 ))}
             </Grid>
