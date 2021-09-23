@@ -13,7 +13,9 @@
     "react-dom": "^17.0.2",
     "react-loader-spinner": "^4.0.0",
     "react-scripts": "^1.1.5",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "words-to-number": "^1.1.0",
+    "words-to-numbers": "^1.5.1"
   },
   "scripts": {
     "start": "react-scripts start",
