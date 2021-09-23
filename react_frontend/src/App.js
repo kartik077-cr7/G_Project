@@ -6,7 +6,7 @@ import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import wordsToNumbers from 'words-to-numbers';
 
 import useStyles from './styles';
-const alanKey = 'a5f32de9ffe131c4fff7ec942bfbe7ad2e956eca572e1d8b807a3e2338fdd0dc/stage';
+const alanKey = 'be29007f7c4834e87c36a5037f65cb9a2e956eca572e1d8b807a3e2338fdd0dc/stage';
 
 const customers = [
   {
