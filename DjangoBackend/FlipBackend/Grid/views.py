@@ -3,6 +3,19 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from Grid.models import Review
+import os 
+path = os.getcwd()+'/FlipBackend/Weights'
+
+import pickle 
+
+svm0 = pickle.load(open(path+'/finalized_model0.sav', 'rb'))
+svm1= pickle.load(open(path+'/finalized_model1.sav', 'rb'))
+tf0 = pickle.load(open(path+'/TFidf_vector0.sav', 'rb'))
+tf1 = pickle.load(open(path+'/Tfidf_vector1.sav', 'rb'))
+
+s= ['product was damaged when delivered','delivery was prompt','error while doing payment','packaging was ugly','customer service was amazing and replied instataneously']
+
+prediction_final(s)
 
 @csrf_exempt 
 def storeReview(request):
