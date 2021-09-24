@@ -23,9 +23,8 @@ def storeReview(request):
     userId = data['UserId']
     customerName = data['CustomerName']
     order_No = data["OrderNo"]
-    category = prediction_final(feedback)
+    category = str(prediction_final(feedback,tf0,tf1,svm0,svm1))
     review = Review(customer_name = customerName, order_no = order_No, review_text = feedback,categories_detected = category)
-    print("review is ",review)
     review.save()
     return JsonResponse({'valid':1})
 

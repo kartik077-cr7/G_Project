@@ -11,10 +11,11 @@
 # category 8 - customer service experience was good
 # category 9 - customer service experience was bad
 
-def prediction_final(string):
-
-    text = tf0.transform(string)
-    text1 = tf1.transform(string)
+def prediction_final(feedback,tf0,tf1,svm0,svm1):
+    
+    feedback = [feedback]
+    text = tf0.transform(feedback)
+    text1 = tf1.transform(feedback)
     
     k = svm0.predict(text)
     k1 = svm1.predict(text1)
