@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import { alpha, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -15,6 +15,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import CartContext from '../store/cart-context';
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -80,10 +81,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  
+  const cartCtx = useContext(CartContext);
+  const cartItemCount = cartCtx.items.length;
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -132,10 +136,10 @@ export default function PrimarySearchAppBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
+      <MenuItem onClick={props.onChange}>
         <IconButton aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="secondary">
-            <ShoppingCartIcon/>
+          <Badge badgeContent={cartItemCount} color="secondary">
+            <ShoppingCartIcon onClick={props.onChange}/>
           </Badge>
         </IconButton>
         <p>Cart</p>
@@ -193,8 +197,8 @@ export default function PrimarySearchAppBar() {
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <IconButton aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <ShoppingCartIcon/>
+              <Badge badgeContent={cartItemCount} color="secondary">
+                <ShoppingCartIcon onClick={props.onChange}/>
               </Badge>
             </IconButton>
             <IconButton aria-label="show 17 new notifications" color="inherit">

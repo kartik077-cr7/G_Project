@@ -1,24 +1,22 @@
-import React,{ useEffect,useState} from 'react';
+import React,{ useEffect,useState,useContext} from 'react';
 import alanBtn from '@alan-ai/alan-sdk-web';
 import AppBar from './components/appBar';
-import AllItem from './components/AllItem';
+import AllItem from './components/Items/AllItem';
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import wordsToNumbers from 'words-to-numbers';
+import Cart from './components/Cart/Cart';
+import CartProvider from './store/CartProvider';
+import CartContext from './store/cart-context';
+import storeItems from './items.json';
+import './index.css';
 
 import useStyles from './styles';
-const alanKey = 'be29007f7c4834e87c36a5037f65cb9a2e956eca572e1d8b807a3e2338fdd0dc/stage';
+import CartItem from './components/CartItem/CartItem';
+const alanKey = 'a5f32de9ffe131c4fff7ec942bfbe7ad2e956eca572e1d8b807a3e2338fdd0dc/stage';
+const firebaseBackend = 'https://flipgrid-71382-default-rtdb.asia-southeast1.firebasedatabase.app/';
 
-const customers = [
-  {
-    name:'Arnab',id:'101'
-  },
-  {
-    name:'Harshal',id:'102'
-  },
-  {
-    name:'Kartik',id:'103'
-  }
-]
+const userId = 102;
+const name = "Kartik";
 
 const breakpointValues = {
   xs: 0,
@@ -34,20 +32,87 @@ const theme = createTheme({
   },
 });
 
-const weather_api = 'http://api.weatherstack.com/current?access_key=90b60d9e553235c8066d59ae8e979e28&query=37.8267,-122.4233';
 let count_isuue = 0;
 let count_feedback = 0;
 let parsedNumber;
 function App() {
   
+  const [isLoading,setIsLoading] = useState(true); 
+  const [cardItems,setCardItems] = useState([]);
   const [objectType,setObjectType] = useState('Normal_Products');
   const [feedback,setFeedback] = useState(' ');
   const [issue,setIssue] = useState(' ');
   
-  console.log("feedback is ",feedback);
-  const userId = 102;
-  const name = "Kartik";
- 
+
+  const cartCtx = useContext(CartContext);
+  
+  const {items,setShowCartItems,showCartItems,removeAllItem} = useContext(CartContext);
+  
+  var [helperCartItems,setHelperCartItems] = useState(items);
+
+  console.log("items  outside are ",helperCartItems);
+
+ const showCartHandler = () => {
+      setShowCartItems(true);
+  }
+
+  const hideCartHandler = () =>{
+      setShowCartItems(false);
+  }
+
+  useEffect(()=>{
+    setHelperCartItems(items);
+  },[items]);
+
+  const addToCart = (id,quantity) => {
+   
+    const sId = id.toString();
+    const item = storeItems.find( i => i.id === sId);
+
+    if(typeof(item) === 'undefined')
+      {
+        alanBtn().playText("Sorry couldn't add please try again");
+        return;
+      }
+
+     cartCtx.addItem({
+        id:sId,
+        name:item.name,
+        amount:Math.ceil(quantity),
+        price:item.price
+     })
+     alanBtn().playText(`added ${Math.ceil(quantity)} ${item.name} to cart...`);
+  }
+
+  const removeFromCart = (id) => {
+
+    const sId = id.toString();
+    
+    console.log("items inside are  ",helperCartItems);
+    const existingCartItemIndex = helperCartItems.findIndex(
+      (item) => item.id === sId
+    );
+
+    console.log("item is ",existingCartItemIndex);
+    removeAllItem(id);
+    alanBtn().playText(`Remove all items with ID ${id} from cart...`);
+    
+  }
+  
+  useEffect(()=>{
+        
+    const fetchItems = async (objectType) =>{
+       setIsLoading(true);
+       const response = await fetch(`${firebaseBackend}/${objectType}.json`)
+       const items2 = await response.json();
+       const savedItems = Object.keys(items2).map((key)=>[key,items2[key]]);
+       setCardItems(savedItems);
+       setIsLoading(false);
+    };
+    fetchItems(objectType);
+  },[objectType])
+
+
   useEffect(()=>{
    
     if(count_feedback == 0)
@@ -112,7 +177,10 @@ function App() {
       
     alanBtn({
        key: alanKey,
-       onCommand:({command,value,id}) => {
+       onCommand:({command,value,id,quantity}) => {
+             
+             console.log("command ",command," value ",value," id ",id," quantity ",quantity);
+            
              if(command === 'testing'){
               alanBtn().playText('Testing Successfull...');
              }        
@@ -129,6 +197,26 @@ function App() {
                parsedNumber = id.length > 3 ? wordsToNumbers((id), { fuzzy: true }) : id;
                setFeedback(value);
              }
+             else if(command == "add-item")
+             {
+               addToCart(id,quantity);
+             }
+             else if(command == "remove-item")
+             {
+                removeFromCart(id,quantity);
+             }
+             else if(command === 'open-cart')
+             {
+                  alanBtn().playText('Opening Cart...');
+                  setShowCartItems(true);
+             }
+             else if(command === 'close-cart')
+             {
+               
+                   alanBtn().playText('Closing cart...');
+                   setShowCartItems(false);
+                
+             }
        }
     })
   },[])
@@ -136,8 +224,9 @@ function App() {
   const classes = useStyles();
   return (
     <ThemeProvider theme={theme}>
-       <AppBar/>
-       <AllItem objectType = {objectType}/>
+       {showCartItems && <Cart onClose = {hideCartHandler}/>}
+       <AppBar onChange = {showCartHandler}/>
+       <AllItem cardItems = {cardItems} isLoading = {isLoading}/>
     </ThemeProvider>
   );
 }

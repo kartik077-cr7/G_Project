@@ -1,0 +1,83 @@
+[
+    {
+        "id":"101",
+        "name":"Car",
+        "price": 35000000
+    },
+    {
+        "id":"102",
+        "name":"Casual Shoes",
+        "price": 1200
+    },
+    {
+        "id":"103",
+        "name":"Guitar",
+        "price": 460000
+    },
+    {
+        "id":"104",
+        "name":"Hair Oil",
+        "price": 5000
+    },
+    {
+        "id":"105",
+        "name":"JBL Speaker",
+        "price": 7500
+    },
+    {
+        "id":"106",
+        "name":"Nike Shoes",
+        "price": 25000
+    },
+    {
+        "id":"107",
+        "name":"Purse",
+        "price": 10000
+    },
+    {
+        "id":"108",
+        "name":"Samsung S10",
+        "price": 98000
+    },
+    {
+        "id":"201",
+        "name":"Back Cushion",
+        "price": 1500
+    },
+    {
+        "id":"202",
+        "name":"Bluetooth Speaker",
+        "price": 12000
+    },
+    {
+        "id":"203",
+        "name":"Book Ends",
+        "price": 1250
+    },
+    {
+        "id":"204",
+        "name":"Iphone 13",
+        "price": 112000
+    },
+    {
+        "id":"205",
+        "name":"Neck Messager",
+        "price": 3500
+    },
+    {
+        "id":"206",
+        "name":"Smart Watch",
+        "price": 7500
+    },
+    {
+        "id":"207",
+        "name":"Temporary Tatoo",
+        "price": 1000
+    },
+    {
+        "id":"208",
+        "name":"Vegetable Chopper",
+        "price": 4500
+    }
+
+]
