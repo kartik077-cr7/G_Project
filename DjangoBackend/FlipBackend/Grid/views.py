@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from Grid.models import Review
-from Weights.prediction import prediction_final
+from Weights.predict import prediction_final
 import os 
 import pickle 
 
