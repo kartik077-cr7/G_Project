@@ -7,7 +7,7 @@ from Weights.predict import prediction_final
 import os 
 import pickle 
 
-path = os.getcwd()+'/FlipBackend/Weights'
+path = os.getcwd()+'/Weights'
 
 svm0 = pickle.load(open(path+'/finalized_model0.sav', 'rb'))
 svm1= pickle.load(open(path+'/finalized_model1.sav', 'rb'))
