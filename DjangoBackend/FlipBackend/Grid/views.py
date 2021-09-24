@@ -17,7 +17,6 @@ from collections import defaultdict
 from nltk.corpus import wordnet as wn
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import model_selection, naive_bayes, svm
-from sklearn.metrics import accuracy_score
 
 path = os.getcwd()+'/Weights'
 
