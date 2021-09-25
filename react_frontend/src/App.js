@@ -17,8 +17,8 @@ import CartItem from './components/CartItem/CartItem';
 const alanKey = 'a5f32de9ffe131c4fff7ec942bfbe7ad2e956eca572e1d8b807a3e2338fdd0dc/stage';
 const firebaseBackend = 'https://flipgrid-71382-default-rtdb.asia-southeast1.firebasedatabase.app/';
 
-const userId = 102;
-const name = "Kartik";
+const userId = 10123;
+const name = "ANONYMOUS";
 var adress;
 const breakpointValues = {
   xs: 0,
@@ -46,36 +46,12 @@ function App() {
   const [feedback,setFeedback] = useState(' ');
   const [issue,setIssue] = useState(' ');
   const [searchResult, setSearchResult] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [didSubmit, setDidSubmit] = useState(false);
+
 
   const cartCtx = useContext(CartContext);
   const {items,setShowCartItems,showCartItems,removeAllItem,totalAmount} = useContext(CartContext);
 
   const [helperCartItems,setHelperCartItems] = useState(items);
-
-  const isSubmittingModalContent = <p>Sending order data...</p>;
- 
-  const didSubmitModalContent = (
-    <React.Fragment>
-      <p>Successfully sent the order!</p>
-      <div className='actions'>
-      <button className='button' >
-        Close
-      </button>
-    </div>
-    </React.Fragment>
-  );
-  
-  if(isSubmitting || didSubmit)
-  {
-    return (
-      <Modal >
-      {isSubmitting && isSubmittingModalContent}
-      {!isSubmitting && didSubmit && didSubmitModalContent}
-     </Modal>
-    )
-  }
 
  const showCartHandler = () => {
       setShowCartItems(true);
@@ -94,7 +70,7 @@ function App() {
     const sId = id.toString();
     const item = storeItems.find( i => i.id === sId);
 
-    if(typeof(item) === 'undefined')
+    if(typeof(item) === undefined)
       {
         alanBtn().playText("Sorry couldn't add please try again");
         return;
@@ -200,12 +176,41 @@ function App() {
        else 
        {
            submitOrderHandler(adress,cartCtx.items);
-           cartCtx.clearCart();
+           alanBtn().setVisualState({value:cartCtx.items})
+           alanBtn().callProjectApi("setClientData", {
+            data: cartCtx.items
+            }, function(error, result) {});
+
            alanBtn().playText(`Your Order has been placed...`);
+           cartCtx.clearCart();
        }
      }
   },[cartCtx.makeOrder])
+  
 
+  const checkKeys = (item) => {
+    if(Object.keys(item[1])[0] === 'Price')
+      return Object.keys(item[1])[1];
+    else
+      return Object.keys(item[1])[0];
+  }
+  
+  useEffect(()=>{
+    if (searchTerm !== '') {
+      const newCardItems = cardItems.filter((item) => {
+          const val = checkKeys(item).toLowerCase();
+          return val.includes(searchTerm.toLowerCase());
+      });
+      setSearchResult(newCardItems);
+  } else {
+      setSearchResult(cardItems);
+    }
+  },[searchTerm])
+
+  const searchHandler = (searchTerm) => {
+    setSearchTerm(searchTerm);
+  }
+ 
   useEffect(() => {
       
     alanBtn({
@@ -259,30 +264,6 @@ function App() {
        }
     })
   },[])
-  
-
-  const checkKeys = (item) => {
-    if(Object.keys(item[1])[0] === 'Price')
-      return Object.keys(item[1])[1];
-    else
-      return Object.keys(item[1])[0];
-  }
-  
-  useEffect(()=>{
-    if (searchTerm !== '') {
-      const newCardItems = cardItems.filter((item) => {
-          const val = checkKeys(item).toLowerCase();
-          return val.includes(searchTerm.toLowerCase());
-      });
-      setSearchResult(newCardItems);
-  } else {
-      setSearchResult(cardItems);
-    }
-  },[searchTerm])
-
-  const searchHandler = (searchTerm) => {
-    setSearchTerm(searchTerm);
-  }
 
   const classes = useStyles();
   return (

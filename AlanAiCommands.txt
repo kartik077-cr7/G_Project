@@ -17,10 +17,14 @@ intent('(Go|) back ', p=> {
 
        
 intent("(I want to give|) feedback for product (id|) $(NUMBER)", async p => {
-    p.play(" What do you think about our product?");
-    const feedback = await p.then(userInput);
-    p.play({command: "feedback", value: feedback["value"], id: p.NUMBER.value});
-    p.play("Thanks for your feedback");
+    
+
+     p.play(" What do you think about our product?");
+     const feedback = await p.then(userInput);
+     p.play({command: "feedback", value: feedback["value"], id: p.NUMBER.value});
+     p.play("Thanks for your feedback");
+                 
+ 
 });
 
 const userInput = context(() => {
@@ -63,6 +67,8 @@ intent("Remove (Item|Product) ID $(NUMBER) from the cart",p=>{
     }
 })
 
+
+
 intent("(Show|Open) cart ",p=>{
     p.play({command:'open-cart'});
 })
@@ -71,3 +77,44 @@ intent("(Close|Remove) cart ",p => {
     p.play({command:'close-cart'});
 })
 
+const itemNameSlot = `$(ITEM_NAME Car|Casual Shoes|Shoes|Guitar|Hair Oil|Speaker
+|JBL Speaker|Nike Shows|Samsung S10|Back Cushion|Bluetooth Speaker
+|Book Ends|Iphone 13|Neck Messager|Smart Watch|Temporary Tatoo
+|Vegetable Chopper|oil)`;
+
+
+intent(`Search for ${itemNameSlot} `,p=>{
+    p.play({command:'search',value:p.ITEM_NAME.value})
+})
+
+intent('search for ',p=>{
+    p.play("sorry couldn't find");
+})
+
+let checkout = context(() => {
+    intent('(My adress is|It is|) $(LOC)',p => {
+        p.play({command:'checkout',value:p.LOC.value});
+    })
+})
+
+intent('(Checkout|Order Items|Place Order)',p=>{
+    p.play('What is the delivery address?');
+    p.then(checkout);
+})
+
+var cartHistory = [];
+
+projectAPI.setClientData = function(p, param, callback) {
+ 
+   p.play("called ");
+
+  if(typeof(param.data) !== undefined)
+    p.play(`pushing ${param.data}`)
+  
+  cartHistory.push(param.data);
+  callback();
+};
+
+intent("Check cart History",p => {
+    p.play(`length is ${cartHistory.length}`);
+})
