@@ -1,4 +1,4 @@
-import React,{useContext} from 'react';
+import React,{useRef,useContext} from 'react';
 import { alpha, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(0, 2),
     height: '100%',
     position: 'absolute',
+    right:'0px',
     pointerEvents: 'none',
     display: 'flex',
     alignItems: 'center',
@@ -56,6 +57,10 @@ const useStyles = makeStyles((theme) => ({
   },
   inputRoot: {
     color: 'inherit',
+  },
+  searchInput:{
+     height:'30px',
+     width:'100%',
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
@@ -85,9 +90,15 @@ export default function PrimarySearchAppBar(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-  
+  const inputEl = useRef("");
+
   const cartCtx = useContext(CartContext);
   const cartItemCount = cartCtx.items.length;
+
+  const getSearchTerm = () =>{
+    console.log("term is ",inputEl.current.value);
+    props.searchKeyword(inputEl.current.value);
+ }
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -183,15 +194,14 @@ export default function PrimarySearchAppBar(props) {
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
-              <SearchIcon />
+              <SearchIcon color="primary"/>
             </div>
-            <InputBase
+            <input
+              ref={inputEl}
+              value = {props.term}
+              onChange={getSearchTerm}
               placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'search' }}
+              className = {classes.searchInput}
             />
           </div>
           <div className={classes.grow} />

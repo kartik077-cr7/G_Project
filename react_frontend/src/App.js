@@ -40,9 +40,10 @@ function App() {
   const [isLoading,setIsLoading] = useState(true); 
   const [cardItems,setCardItems] = useState([]);
   const [objectType,setObjectType] = useState('Normal_Products');
+  const [searchTerm, setSearchTerm] = useState('');
   const [feedback,setFeedback] = useState(' ');
   const [issue,setIssue] = useState(' ');
-  
+  const [searchResult, setSearchResult] = useState('');
 
   const cartCtx = useContext(CartContext);
   
@@ -213,13 +214,35 @@ function App() {
        }
     })
   },[])
+  
+  const checkKeys = (item) => {
+    if(Object.keys(item[1])[0] === 'Price')
+      return Object.keys(item[1])[1];
+    else
+      return Object.keys(item[1])[0];
+  }
+
+  const searchHandler = (searchTerm) => {
+    setSearchTerm(searchTerm);
+    console.log("value received ",searchTerm);
+    if (searchTerm !== '') {
+      const newCardItems = cardItems.filter((item) => {
+          const val = checkKeys(item).toLowerCase();
+          return val.includes(searchTerm.toLowerCase());
+      });
+
+      setSearchResult(newCardItems);
+  } else {
+      setSearchResult(cardItems);
+    }
+  }
 
   const classes = useStyles();
   return (
     <ThemeProvider theme={theme}>
        {showCartItems && <Cart onClose = {hideCartHandler}/>}
-       <AppBar onChange = {showCartHandler}/>
-       <AllItem cardItems = {cardItems} isLoading = {isLoading}/>
+       <AppBar onChange = {showCartHandler} term={searchTerm} searchKeyword={searchHandler}/>
+       <AllItem cardItems = {searchTerm.length < 1 ? cardItems : searchResult} isLoading = {isLoading}/>
     </ThemeProvider>
   );
 }

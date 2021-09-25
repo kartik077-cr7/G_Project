@@ -8,6 +8,7 @@ const defaultCartState = {
 };
 
 const cartReducer = (state, action) => {
+  
   if (action.type === 'ADD') {
 
     const updatedTotalAmount =
@@ -55,10 +56,25 @@ const cartReducer = (state, action) => {
       totalAmount: updatedTotalAmount
     };
   }
-  else if( action === "REMOVE_ALL")
+  else if( action.type === "REMOVE_ALL")
   {
      const existingItems = state.items.findIndex((item) => item.id === action.id);
+     const existimgItemscost = state.items.reduce(function( previousValue,currentValue){
+       if(currentValue.id === action.id)
+         previousValue+= currentValue.amount*currentValue.price;
 
+        return previousValue;
+     },[]);
+     
+     const updatedAmount = state.totalAmount-existimgItemscost;
+     const updatedItem = state.items.filter((item) => item.id !== action.id);
+
+     console.log("sum of previousvalue is ",existimgItemscost);
+
+     return{
+       items: updatedItem,
+       totalAmount:updatedAmount
+     }
   }
   return defaultCartState;
 };
@@ -85,8 +101,7 @@ const CartProvider = (props) => {
   }
 
   const removeAllItemFromCartHandler = (id) => {
-    
-    //dispatchCartAction({type:'REMOVE_ALL',id:id});
+       dispatchCartAction({type:'REMOVE_ALL',id:id});
   }
 
   const cartContext = {
