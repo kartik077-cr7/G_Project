@@ -208,8 +208,12 @@ function App() {
              {
                
                    alanBtn().playText('Closing cart...');
-                   setShowCartItems(false);
-                
+                   setShowCartItems(false);             
+             }
+             else if(command === 'search')
+             {
+               console.log("value is ",value);
+               searchHandler(value);
              }
        }
     })
@@ -221,6 +225,20 @@ function App() {
     else
       return Object.keys(item[1])[0];
   }
+  
+  useEffect(()=>{
+    console.log("value received ",searchTerm);
+    if (searchTerm !== '') {
+      const newCardItems = cardItems.filter((item) => {
+          const val = checkKeys(item).toLowerCase();
+          return val.includes(searchTerm.toLowerCase());
+      });
+       console.log("new Cart Items are ",newCardItems);
+      setSearchResult(newCardItems);
+  } else {
+      setSearchResult(cardItems);
+    }
+  },[searchTerm])
 
   const searchHandler = (searchTerm) => {
     setSearchTerm(searchTerm);
@@ -230,7 +248,7 @@ function App() {
           const val = checkKeys(item).toLowerCase();
           return val.includes(searchTerm.toLowerCase());
       });
-
+       console.log("new Cart Items are ",newCardItems);
       setSearchResult(newCardItems);
   } else {
       setSearchResult(cardItems);
