@@ -69,8 +69,6 @@ const cartReducer = (state, action) => {
      const updatedAmount = state.totalAmount-existimgItemscost;
      const updatedItem = state.items.filter((item) => item.id !== action.id);
 
-     console.log("sum of previousvalue is ",existimgItemscost);
-
      return{
        items: updatedItem,
        totalAmount:updatedAmount
@@ -82,7 +80,8 @@ const cartReducer = (state, action) => {
 const CartProvider = (props) => {
 
   const [showCartItems,setShowCartItems] = useState(false);
-  
+  const [makeOrder,setMakeOrder] = useState(1);
+
   const [cartState, dispatchCartAction] = useReducer(
     cartReducer,
     defaultCartState
@@ -112,7 +111,9 @@ const CartProvider = (props) => {
     setShowCartItems,
     removeItem: removeItemFromCartHandler,
     clearCart:clearCartHandler,
-    removeAllItem: removeAllItemFromCartHandler
+    removeAllItem: removeAllItemFromCartHandler,
+    makeOrder,
+    setMakeOrder,
   };
 
   return (

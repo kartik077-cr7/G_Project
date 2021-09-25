@@ -8,6 +8,8 @@ import Cart from './components/Cart/Cart';
 import CartProvider from './store/CartProvider';
 import CartContext from './store/cart-context';
 import storeItems from './items.json';
+import Modal from './components/Modal/Modal';
+import { submitOrderHandler } from './service';
 import './index.css';
 
 import useStyles from './styles';
@@ -17,7 +19,7 @@ const firebaseBackend = 'https://flipgrid-71382-default-rtdb.asia-southeast1.fir
 
 const userId = 102;
 const name = "Kartik";
-
+var adress;
 const breakpointValues = {
   xs: 0,
   sm: 660,
@@ -44,14 +46,36 @@ function App() {
   const [feedback,setFeedback] = useState(' ');
   const [issue,setIssue] = useState(' ');
   const [searchResult, setSearchResult] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [didSubmit, setDidSubmit] = useState(false);
 
   const cartCtx = useContext(CartContext);
-  
-  const {items,setShowCartItems,showCartItems,removeAllItem} = useContext(CartContext);
-  
-  var [helperCartItems,setHelperCartItems] = useState(items);
+  const {items,setShowCartItems,showCartItems,removeAllItem,totalAmount} = useContext(CartContext);
 
+  const [helperCartItems,setHelperCartItems] = useState(items);
+
+  const isSubmittingModalContent = <p>Sending order data...</p>;
+ 
+  const didSubmitModalContent = (
+    <React.Fragment>
+      <p>Successfully sent the order!</p>
+      <div className='actions'>
+      <button className='button' >
+        Close
+      </button>
+    </div>
+    </React.Fragment>
+  );
   
+  if(isSubmitting || didSubmit)
+  {
+    return (
+      <Modal >
+      {isSubmitting && isSubmittingModalContent}
+      {!isSubmitting && didSubmit && didSubmitModalContent}
+     </Modal>
+    )
+  }
 
  const showCartHandler = () => {
       setShowCartItems(true);
@@ -146,8 +170,6 @@ function App() {
     else
     {
       const url = "http://127.0.0.1:8000/storeIssue";
-      
-
       const bodyData = JSON.stringify({
         "UserId":userId,
         "Issue":feedback
@@ -167,58 +189,78 @@ function App() {
     }
     
   },[issue])
+  
+  useEffect(()=>{
+     if(cartCtx.makeOrder !== 1)
+     {
+       if(cartCtx.items.length < 1)
+       {
+         alanBtn().playText(`Your Cart is empty...`);
+       }
+       else 
+       {
+           submitOrderHandler(adress,cartCtx.items);
+           cartCtx.clearCart();
+           alanBtn().playText(`Your Order has been placed...`);
+       }
+     }
+  },[cartCtx.makeOrder])
 
   useEffect(() => {
       
     alanBtn({
        key: alanKey,
        onCommand:({command,value,id,quantity}) => {
-             
-            
              if(command === 'testing'){
-              alanBtn().playText('Testing Successfull...');
+               alanBtn().playText('Testing Successfull...');
              }        
              else if(command === 'trending_products') 
              {
-               setObjectType('Trending_Product')
+               setObjectType('Trending_Product');
+               setSearchTerm('');
              }
              else if(command === 'go_back')
              {
                setObjectType('Normal_Products')
+               setSearchTerm('');
              }
-             else if(command == "feedback")
+             else if(command === "feedback")
              {
                parsedNumber = id.length > 3 ? wordsToNumbers((id), { fuzzy: true }) : id;
                setFeedback(value);
              }
-             else if(command == "add-item")
+             else if(command === "add-item")
              {
                addToCart(id,quantity);
              }
-             else if(command == "remove-item")
+             else if(command === "remove-item")
              {
                 removeFromCart(id,quantity);
              }
              else if(command === 'open-cart')
              {
-                  alanBtn().playText('Opening Cart...');
-                  setShowCartItems(true);
+                alanBtn().playText('Opening Cart...');
+                setShowCartItems(true);
              }
              else if(command === 'close-cart')
              {
-               
-                   alanBtn().playText('Closing cart...');
-                   setShowCartItems(false);             
+                alanBtn().playText('Closing cart...');
+                setShowCartItems(false);             
              }
              else if(command === 'search')
              {
-               console.log("value is ",value);
                searchHandler(value);
+             }
+             else if(command === 'checkout')
+             {
+                adress = value;
+                cartCtx.setMakeOrder(prevstate=> prevstate+1);
              }
        }
     })
   },[])
   
+
   const checkKeys = (item) => {
     if(Object.keys(item[1])[0] === 'Price')
       return Object.keys(item[1])[1];
@@ -227,13 +269,11 @@ function App() {
   }
   
   useEffect(()=>{
-    console.log("value received ",searchTerm);
     if (searchTerm !== '') {
       const newCardItems = cardItems.filter((item) => {
           const val = checkKeys(item).toLowerCase();
           return val.includes(searchTerm.toLowerCase());
       });
-       console.log("new Cart Items are ",newCardItems);
       setSearchResult(newCardItems);
   } else {
       setSearchResult(cardItems);
@@ -242,17 +282,6 @@ function App() {
 
   const searchHandler = (searchTerm) => {
     setSearchTerm(searchTerm);
-    console.log("value received ",searchTerm);
-    if (searchTerm !== '') {
-      const newCardItems = cardItems.filter((item) => {
-          const val = checkKeys(item).toLowerCase();
-          return val.includes(searchTerm.toLowerCase());
-      });
-       console.log("new Cart Items are ",newCardItems);
-      setSearchResult(newCardItems);
-  } else {
-      setSearchResult(cardItems);
-    }
   }
 
   const classes = useStyles();

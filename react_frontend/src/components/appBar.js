@@ -96,7 +96,6 @@ export default function PrimarySearchAppBar(props) {
   const cartItemCount = cartCtx.items.length;
 
   const getSearchTerm = () =>{
-    console.log("term is ",inputEl.current.value);
     props.searchKeyword(inputEl.current.value);
  }
 
@@ -116,6 +115,10 @@ export default function PrimarySearchAppBar(props) {
     handleMobileMenuClose();
   };
 
+  const handleMenuCloseSecondary = () => {
+    setMobileMoreAnchorEl(null);
+    props.onChange();
+  }
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
@@ -147,7 +150,7 @@ export default function PrimarySearchAppBar(props) {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem onClick={props.onChange}>
+      <MenuItem onClick={handleMenuCloseSecondary}>
         <IconButton aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={cartItemCount} color="secondary">
             <ShoppingCartIcon onClick={props.onChange}/>

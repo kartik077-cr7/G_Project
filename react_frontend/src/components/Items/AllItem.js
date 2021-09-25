@@ -22,7 +22,6 @@ const useStyles = makeStyles({
 
   export default function AllItems({cardItems,isLoading}) {
          
-      console.log("all items are ",cardItems,typeof(cardItems));
       const classes = useStyles();
       
       if(isLoading)

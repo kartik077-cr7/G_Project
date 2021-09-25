@@ -5,10 +5,9 @@ import CartItem from '../CartItem/CartItem';
 import CartContext from '../../store/cart-context';
 
 const userData = {
-  'id':102,
-  'name':"Kartik",
-  'pin':263139,
-  'adress':"TrilokNagar Do Nahariya Haldwani"
+  'id':10123,
+  'name':"ANONYMOUS",
+  'adress':"Mumbai"
 }
 const Cart = (props) => {
   
@@ -26,11 +25,11 @@ const Cart = (props) => {
   const cartItemAddHandler = (item) => {
     cartCtx.addItem({ ...item, amount: 1 });
   };
-
+  
 
   const submitOrderHandler = async () => {
     setIsSubmitting(true);
-    await fetch('https://react-http-6093d-default-rtdb.firebaseio.com/orders.json', {
+    await fetch('https://flipgrid-71382-default-rtdb.asia-southeast1.firebasedatabase.app/orders.json', {
       method: 'POST',
       body: JSON.stringify({
         user: userData,
@@ -42,8 +41,6 @@ const Cart = (props) => {
     cartCtx.clearCart();
   };
 
-  console.log("isSubmitting",isSubmitting);
-  console.log("didSubmit",didSubmit);
 
   const cartItems = (
     <ul className='cart-items'>
