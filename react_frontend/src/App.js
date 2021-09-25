@@ -50,7 +50,7 @@ function App() {
   
   var [helperCartItems,setHelperCartItems] = useState(items);
 
-  console.log("items  outside are ",helperCartItems);
+  
 
  const showCartHandler = () => {
       setShowCartItems(true);
@@ -88,14 +88,12 @@ function App() {
 
     const sId = id.toString();
     
-    console.log("items inside are  ",helperCartItems);
     const existingCartItemIndex = helperCartItems.findIndex(
       (item) => item.id === sId
     );
 
-    console.log("item is ",existingCartItemIndex);
     removeAllItem(id);
-    alanBtn().playText(`Remove all items with ID ${id} from cart...`);
+    alanBtn().playText(`Removed all items with ID ${id} from cart...`);
     
   }
   
@@ -121,8 +119,6 @@ function App() {
     }
     else 
     {
-      console.log("Feedback is ",feedback);
-      console.log("under handling feedback");
       const url="http://localhost:8000/storeReview";
       
       const bodyData=JSON.stringify({
@@ -148,9 +144,7 @@ function App() {
     }
     else
     {
-      console.log("Issue is ",issue);
-      console.log("under handling issue");
-      const url = "http://127.0.0.1:8000/storeReview";
+      const url = "http://127.0.0.1:8000/storeIssue";
       
 
       const bodyData = JSON.stringify({
@@ -179,7 +173,6 @@ function App() {
        key: alanKey,
        onCommand:({command,value,id,quantity}) => {
              
-             console.log("command ",command," value ",value," id ",id," quantity ",quantity);
             
              if(command === 'testing'){
               alanBtn().playText('Testing Successfull...');

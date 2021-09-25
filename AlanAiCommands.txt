@@ -1,0 +1,73 @@
+// Use this sample to create your own voice commands
+intent('hello world', p => {
+    p.play('(hello|hi there)');
+    p.play({command:'testing'})
+});
+
+intent('(Show me| what are) (some|) treding products',p=>{
+    p.play('Sure');
+    p.play({command:'trending_products'});
+    p.play('Here are some trending products');
+})
+
+intent('(Go|) back ', p=> {
+    p.play('(Sure| Going back)');
+    p.play({command:'go_back'});
+})
+
+       
+intent("(I want to give|) feedback for product (id|) $(NUMBER)", async p => {
+    p.play(" What do you think about our product?");
+    const feedback = await p.then(userInput);
+    p.play({command: "feedback", value: feedback["value"], id: p.NUMBER.value});
+    p.play("Thanks for your feedback");
+});
+
+const userInput = context(() => {
+    intent("$(I* .+)", p => p.resolve(p.I));
+})
+
+intent("(I want to give|) feedback for a product",p => {
+    p.play("please state the product ID");
+});
+
+const quantityContext = context(()=>{
+     
+   follow("$(QUANTITY NUMBER)",p => {
+       p.play( {command:'add-item',quantity: p.QUANTITY.number, id: p.state.id} )
+       p.resolve()
+   })
+   fallback("Please state how many items you want to add")
+})
+
+intent("Add (Item|Product) ID $(NUMBER) to cart",p=>{
+    
+    if( (p.NUMBER.value >=101 && p.NUMBER.value <=108) || (p.NUMBER.value >= 201 && p.NUMBER.value <= 208) )
+        {
+            p.play("How many would you like to add ?");
+            p.then(quantityContext,{state: {id: p.NUMBER.value}});
+        }
+    else
+        {
+          p.play("No such item ID exist");
+        }
+})
+
+intent("Remove (Item|Product) ID $(NUMBER) from the cart",p=>{
+    if( (p.NUMBER.value >=101 && p.NUMBER.value <=108) || (p.NUMBER.value >= 201 && p.NUMBER.value <= 208) )
+        {
+             p.play({command:'remove-item',id:p.NUMBER.value})
+        }
+    else{
+        p.play("No such item ID exist");
+    }
+})
+
+intent("(Show|Open) cart ",p=>{
+    p.play({command:'open-cart'});
+})
+
+intent("(Close|Remove) cart ",p => {
+    p.play({command:'close-cart'});
+})
+
