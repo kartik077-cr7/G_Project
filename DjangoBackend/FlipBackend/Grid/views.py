@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-from Grid.models import Review
+from Grid.models import Review,Issues
 from Weights.predict import prediction_final
 import os 
 import pickle 
@@ -35,6 +35,7 @@ def storeReview(request):
     customerName = data['CustomerName']
     order_No = data["OrderNo"]
     category = str(prediction_final(feedback,tf0,tf1,svm0,svm1))
+    print("category detected is ",category)
     review = Review(customer_name = customerName, order_no = order_No, review_text = feedback,categories_detected = category)
     review.save()
     return JsonResponse({'valid':1})
@@ -43,7 +44,13 @@ def storeReview(request):
 @csrf_exempt 
 def storeIssue(request):
     data = json.loads(request.body)
-    print("data is ",data)
+    print("data for issue is ",data)
 
-    
+    user_id  = data['userId']
+    customer_name = data['customerName']
+    issue_category =  data['category']
+    issue_text = data['issueText']
+
+    issue = Issues(customer_name = customer_name,issue_category = issue_category,issue_text=issue_text)
+    issue.save()
     return JsonResponse({'valid':1})

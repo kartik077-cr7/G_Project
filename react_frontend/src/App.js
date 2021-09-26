@@ -14,12 +14,13 @@ import './index.css';
 
 import useStyles from './styles';
 import CartItem from './components/CartItem/CartItem';
+import { ca } from 'date-fns/locale';
 const alanKey = 'a5f32de9ffe131c4fff7ec942bfbe7ad2e956eca572e1d8b807a3e2338fdd0dc/stage';
 const firebaseBackend = 'https://flipgrid-71382-default-rtdb.asia-southeast1.firebasedatabase.app/';
 
 const userId = 10123;
 const name = "ANONYMOUS";
-var adress;
+var adress,category;
 const breakpointValues = {
   xs: 0,
   sm: 660,
@@ -46,6 +47,7 @@ function App() {
   const [feedback,setFeedback] = useState(' ');
   const [issue,setIssue] = useState(' ');
   const [searchResult, setSearchResult] = useState('');
+  const [category,setCategory] = useState();
   const alanBtnInstance = useRef(null);
 
   const cartCtx = useContext(CartContext);
@@ -145,10 +147,13 @@ function App() {
     }
     else
     {
+      console.log("category is ",category);
       const url = "http://127.0.0.1:8000/storeIssue";
       const bodyData = JSON.stringify({
-        "UserId":userId,
-        "Issue":feedback
+        "userId":userId,
+        "issueText":issue,
+        "category":category,
+        "customerName":name
       });
 
       const reqOpt = {
@@ -217,7 +222,7 @@ function App() {
     {
      alanBtnInstance.current = alanBtn({
         key: alanKey,
-        onCommand:({command,value,id,quantity}) => {
+        onCommand:({command,value,id,quantity,category}) => {
               if(command === 'testing'){
                 alanBtn().playText('Testing Successfull...');
               }        
@@ -235,6 +240,11 @@ function App() {
               {
                 parsedNumber = id.length > 3 ? wordsToNumbers((id), { fuzzy: true }) : id;
                 setFeedback(value);
+              }
+              else if(command === "issue")
+              {
+                setCategory(category);
+                setIssue(value);
               }
               else if(command === "add-item")
               {
