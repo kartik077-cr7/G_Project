@@ -1,4 +1,4 @@
-import React,{ useEffect,useState,useContext} from 'react';
+import React,{ useEffect,useState,useContext,useRef} from 'react';
 import alanBtn from '@alan-ai/alan-sdk-web';
 import AppBar from './components/appBar';
 import AllItem from './components/Items/AllItem';
@@ -46,7 +46,7 @@ function App() {
   const [feedback,setFeedback] = useState(' ');
   const [issue,setIssue] = useState(' ');
   const [searchResult, setSearchResult] = useState('');
-
+  const alanBtnInstance = useRef(null);
 
   const cartCtx = useContext(CartContext);
   const {items,setShowCartItems,showCartItems,removeAllItem,totalAmount} = useContext(CartContext);
@@ -176,7 +176,7 @@ function App() {
        else 
        {
            submitOrderHandler(adress,cartCtx.items);
-           alanBtn().setVisualState({value:cartCtx.items})
+           alanBtnInstance.current.setVisualState({"value":cartCtx.items})
            alanBtn().callProjectApi("setClientData", {
             data: cartCtx.items
             }, function(error, result) {});
@@ -213,56 +213,59 @@ function App() {
  
   useEffect(() => {
       
-    alanBtn({
-       key: alanKey,
-       onCommand:({command,value,id,quantity}) => {
-             if(command === 'testing'){
-               alanBtn().playText('Testing Successfull...');
-             }        
-             else if(command === 'trending_products') 
-             {
-               setObjectType('Trending_Product');
-               setSearchTerm('');
-             }
-             else if(command === 'go_back')
-             {
-               setObjectType('Normal_Products')
-               setSearchTerm('');
-             }
-             else if(command === "feedback")
-             {
-               parsedNumber = id.length > 3 ? wordsToNumbers((id), { fuzzy: true }) : id;
-               setFeedback(value);
-             }
-             else if(command === "add-item")
-             {
-               addToCart(id,quantity);
-             }
-             else if(command === "remove-item")
-             {
-                removeFromCart(id,quantity);
-             }
-             else if(command === 'open-cart')
-             {
-                alanBtn().playText('Opening Cart...');
-                setShowCartItems(true);
-             }
-             else if(command === 'close-cart')
-             {
-                alanBtn().playText('Closing cart...');
-                setShowCartItems(false);             
-             }
-             else if(command === 'search')
-             {
-               searchHandler(value);
-             }
-             else if(command === 'checkout')
-             {
-                adress = value;
-                cartCtx.setMakeOrder(prevstate=> prevstate+1);
-             }
-       }
-    })
+    if(!alanBtnInstance.current)
+    {
+     alanBtnInstance.current = alanBtn({
+        key: alanKey,
+        onCommand:({command,value,id,quantity}) => {
+              if(command === 'testing'){
+                alanBtn().playText('Testing Successfull...');
+              }        
+              else if(command === 'trending_products') 
+              {
+                setObjectType('Trending_Product');
+                setSearchTerm('');
+              }
+              else if(command === 'go_back')
+              {
+                setObjectType('Normal_Products')
+                setSearchTerm('');
+              }
+              else if(command === "feedback")
+              {
+                parsedNumber = id.length > 3 ? wordsToNumbers((id), { fuzzy: true }) : id;
+                setFeedback(value);
+              }
+              else if(command === "add-item")
+              {
+                addToCart(id,quantity);
+              }
+              else if(command === "remove-item")
+              {
+                  removeFromCart(id,quantity);
+              }
+              else if(command === 'open-cart')
+              {
+                  alanBtn().playText('Opening Cart...');
+                  setShowCartItems(true);
+              }
+              else if(command === 'close-cart')
+              {
+                  alanBtn().playText('Closing cart...');
+                  setShowCartItems(false);             
+              }
+              else if(command === 'search')
+              {
+                searchHandler(value);
+              }
+              else if(command === 'checkout')
+              {
+                  adress = value;
+                  cartCtx.setMakeOrder(prevstate=> prevstate+1);
+              }
+        }
+      })
+    }
   },[])
 
   const classes = useStyles();
